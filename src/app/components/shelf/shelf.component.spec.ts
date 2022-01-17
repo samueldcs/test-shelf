@@ -5,15 +5,23 @@ import {ProductsService} from '../../services/products.service';
 import {Product} from '../../models/product';
 import {Observable, of} from 'rxjs';
 import {ProductTypeEnum} from '../../models/productTypeEnum';
+import {CurrencyPipe} from '@angular/common';
 
 describe('ShelfComponent', () => {
   let component: ShelfComponent;
+  let currencyPipe: CurrencyPipe = new CurrencyPipe('en');
   let fixture: ComponentFixture<ShelfComponent>;
   let productsMock: Product[] = [
-    { inStock: true, name: 'In Stock Product 1', price: 10, description: 'Stock Desc.', type: ProductTypeEnum.COMPANY },
-    { inStock: true, name: 'In Stock Product 2', price: 90, description: 'Stock Desc. 2', type: ProductTypeEnum.FRUIT },
-    { inStock: false, name: 'No Stock Product', price: 2190, description: 'No Stock Desc.', type: ProductTypeEnum.PROGRAMMING_LANGUAGE },
-  ]
+    {inStock: true, name: 'In Stock Product 1', price: 10, description: 'Stock Desc.', type: ProductTypeEnum.COMPANY},
+    {inStock: true, name: 'In Stock Product 2', price: 90, description: 'Stock Desc. 2', type: ProductTypeEnum.FRUIT},
+    {
+      inStock: false,
+      name: 'No Stock Product',
+      price: 2190,
+      description: 'No Stock Desc.',
+      type: ProductTypeEnum.PROGRAMMING_LANGUAGE
+    },
+  ];
   let productServiceMock: Partial<ProductsService> = {
     findAll(): Observable<Product[]> {
       return of(productsMock);
@@ -22,12 +30,12 @@ describe('ShelfComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ShelfComponent ],
+      declarations: [ShelfComponent],
       providers: [
-        { provide: ProductsService, useValue: productServiceMock }
+        {provide: ProductsService, useValue: productServiceMock}
       ]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {
@@ -38,12 +46,12 @@ describe('ShelfComponent', () => {
 
   it('should display product count', () => {
     const shelfElement: HTMLElement = fixture.nativeElement;
-    const productCount = shelfElement.querySelector('[data-test="product-count"]')!
+    const productCount = shelfElement.querySelector('[data-test="product-count"]')!;
 
     expect(productCount.textContent).toEqual('Products (3)');
 
     component.products = [];
-    fixture.detectChanges()
+    fixture.detectChanges();
     expect(productCount.textContent).toEqual('Products (0)');
   });
 
@@ -51,23 +59,55 @@ describe('ShelfComponent', () => {
     const shelfElement: HTMLElement = fixture.nativeElement;
 
     productsMock.forEach(product => {
-      let selector = `[data-test="${product.name + '-container'}"]`
-      const productContainerElement = shelfElement.querySelector(selector)!
+      let selector = `[data-test="${product.name + '-container'}"]`;
+      const productContainerElement = shelfElement.querySelector(selector)!;
 
-      expect(productContainerElement).toBeTruthy()
-    })
+      expect(productContainerElement).toBeTruthy();
+    });
   });
 
   it('should render information about all products', () => {
     const shelfElement: HTMLElement = fixture.nativeElement;
 
     productsMock.forEach(product => {
-      let selector = `[data-test="${product.name + '-header'}"]`
-      const productContainerElement = shelfElement.querySelector(selector)!.textContent
+      let headerSelector = `[data-test="${product.name + '-header'}"]`;
+      let priceSelector = `[data-test="${product.name + '-price'}"]`;
+      let descriptionSelector = `[data-test="${product.name + '-description'}"]`;
+      const productHeader = shelfElement.querySelector(headerSelector)!.textContent;
+      const productPrice = shelfElement.querySelector(priceSelector)!.textContent;
+      const productDescription = shelfElement.querySelector(descriptionSelector)!.textContent;
 
-      expect(productContainerElement).toContain(product.name)
-      expect(productContainerElement).toContain(product.type)
-    })
+      expect(productHeader).toContain(product.name);
+      expect(productHeader).toContain(product.type);
+      expect(productDescription).toContain(product.description);
+      expect(productPrice).toContain(currencyPipe.transform(product.price));
+    });
+  });
+
+  it('should render "in stock" tag for products in stock', () => {
+    const shelfElement: HTMLElement = fixture.nativeElement;
+
+    productsMock
+      .filter(p => p.inStock)
+      .forEach(product => {
+        let inStockSelector = `[data-test="${product.name + '-inStock'}"]`;
+        const productInStockTag = shelfElement.querySelector(inStockSelector)!.textContent;
+
+        expect(productInStockTag).toEqual(' In Stock ');
+      });
+  });
+
+  it('should NOT render "in stock" tag for products out of stock', () => {
+    const shelfElement: HTMLElement = fixture.nativeElement;
+
+    productsMock
+      .filter(p => !p.inStock)
+      .forEach(product => {
+        let inStockSelector = `[data-test="${product.name + '-inStock'}"]`;
+        const productInStockTag = shelfElement.querySelector(inStockSelector);
+
+        expect(productInStockTag).toBeNull()
+      });
   });
 
 });

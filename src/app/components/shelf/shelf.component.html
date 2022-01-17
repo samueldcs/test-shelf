@@ -7,8 +7,12 @@
       In Stock
       <br>
     </span>
-    {{product.price | currency}}
+    <span [attr.data-test]="product.name + '-price'">
+      {{product.price | currency}}
+    </span>
     <br>
-    {{product.description}}
+    <p [attr.data-test]="product.name + '-description'">
+      {{product.description}}
+    </p>
   </div>
 </main>
