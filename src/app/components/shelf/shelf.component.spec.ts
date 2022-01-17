@@ -6,8 +6,12 @@ import {Product} from '../../models/product';
 import {Observable, of} from 'rxjs';
 import {ProductTypeEnum} from '../../models/productTypeEnum';
 import {CurrencyPipe} from '@angular/common';
+import {By} from '@angular/platform-browser';
+import {Router} from '@angular/router';
+import Spy = jasmine.Spy;
 
 describe('ShelfComponent', () => {
+  const routerSpy = jasmine.createSpyObj('Router', ['navigateByUrl']);
   let component: ShelfComponent;
   let currencyPipe: CurrencyPipe = new CurrencyPipe('en');
   let fixture: ComponentFixture<ShelfComponent>;
@@ -32,7 +36,8 @@ describe('ShelfComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ShelfComponent],
       providers: [
-        {provide: ProductsService, useValue: productServiceMock}
+        {provide: Router, useValue: routerSpy},
+        {provide: ProductsService, useValue: productServiceMock},
       ]
     })
       .compileComponents();
@@ -108,6 +113,19 @@ describe('ShelfComponent', () => {
 
         expect(productInStockTag).toBeNull()
       });
+  });
+
+  it('should route to product details on click', () => {
+    let product = productsMock[0]
+    let productSelector = `div[data-test="${product.name}-container"]`
+
+    const shelfElement = fixture.debugElement.query(By.css(productSelector))!;
+    shelfElement.triggerEventHandler('click', null);
+
+    const routerCall = (routerSpy.navigateByUrl as Spy).calls.first()
+
+    expect(routerCall.args[0]).toEqual('/product')
+    expect(routerCall.args[1]).toEqual({ state: product })
   });
 
 });

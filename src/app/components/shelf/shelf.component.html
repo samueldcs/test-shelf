@@ -1,6 +1,6 @@
 <main>
   <h1 data-test="product-count">Products ({{products.length}})</h1>
-  <div *ngFor="let product of products" class="product-container" [attr.data-test]="product.name + '-container'">
+  <div *ngFor="let product of products" class="product-container" [attr.data-test]="product.name + '-container'" (click)="viewProduct(product)">
     <span [attr.data-test]="product.name + '-header'">{{product.name}} &#8226; {{product.type}}</span>
     <br>
     <span *ngIf="product.inStock" class="in-stock" [attr.data-test]="product.name + '-inStock'">
