@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {Product} from '../../models/product';
+import {ProductsService} from '../../services/products.service';
 
 @Component({
   selector: 'app-shelf',
@@ -7,9 +9,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ShelfComponent implements OnInit {
 
-  constructor() { }
+  products: Product[] = [];
+
+  constructor(private productsService: ProductsService) { }
 
   ngOnInit(): void {
+    this.productsService
+      .findAll()
+      .subscribe(res => this.products = res)
   }
 
 }
