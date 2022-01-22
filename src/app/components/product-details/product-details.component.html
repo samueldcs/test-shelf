@@ -1,0 +1,16 @@
+<main>
+  <h1 data-test="product-name">{{prod.name}}</h1>
+  <b data-test="product-type">{{prod.type}}</b>
+  <br>
+  <span data-test="product-in-stock" class="in-stock" *ngIf="prod.inStock">
+    In Stock
+  </span>
+  &#8226;
+  <span data-test="product-price">
+    {{prod.price | currency }}
+  </span>
+  <br><br>
+  <span data-test="product-description">
+    {{prod.description}}
+  </span>
+</main>

@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import {ProductsService} from '../../services/products.service';
+import {Component} from '@angular/core';
+import {Router} from '@angular/router';
 import {Product} from '../../models/product';
 
 @Component({
@@ -9,4 +9,9 @@ import {Product} from '../../models/product';
 })
 export class ProductDetailsComponent {
 
+  prod: Product;
+
+  constructor(private router: Router) {
+    this.prod = this.router.getCurrentNavigation()?.extras.state as Product;
+  }
 }

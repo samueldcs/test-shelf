@@ -1,0 +1,15 @@
+main {
+  font-family: sans-serif;
+  margin: 8px 4px;
+}
+
+.in-stock {
+  color: white;
+  background-color: seagreen;
+  display: inline-block;
+  font-size: smaller;
+  font-weight: bolder;
+  margin: 4px 0;
+  padding: 4px 4px;
+  border-radius: 4px;
+}
